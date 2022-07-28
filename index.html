@@ -1,96 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-        <meta charset="utf-8" />
-        <title>GWR4 Downloads</title>
-        <link rel="stylesheet" href="/theme/css/main.css" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content="天地图"/>
+    <title>天地图－地图API－范例－加载两个地图</title>
+    <style type="text/css">
+        body, html {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+        #map1_container {width:100%;height:80%;float:left;overflow: hidden;margin:0;}
+    </style>
+    <script type="text/javascript" src="http://api.tianditu.gov.cn/api?v=4.0&tk=a164f953f301c4b2833250d64104a77a"></script>
+    <script src="http://cdn.bootcss.com/d3/3.5.17/d3.js " charset="utf-8"></script>
+    <script src="http://lbs.tianditu.gov.cn/api/js4.0/opensource/openlibrary/D3SvgOverlay.js"></script>
+    <script>
+		//注：同一页面创建多个地图时必须为同一投影
+        var map,map2;
+        var zoom = 12;
+        function onLoad() {
+           var imgURL1 ="http://t0.tianditu.gov.cn/img_w/wmts?" +     "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" +
+            "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}" +
+            "&tk=a164f953f301c4b2833250d64104a77a";//影像底图
+        	//创建自定义图层对象
+          var imgURL2 ="http://t0.tianditu.gov.cn/cia_w/wmts?" +     "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cia&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" +
+            "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}" +
+            "&tk=a164f953f301c4b2833250d64104a77a";//矢量注记
+        	//创建自定义图层对象
+            var lay1 = new T.TileLayer(imgURL1, { minZoom: 6, maxZoom: 18 });
+            var lay2 = new T.TileLayer(imgURL2, { minZoom: 6, maxZoom: 18 });
 
-        <!--[if IE]>
-            <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
+            var config = { layers: [lay1,lay2] };
+            map = new T.Map('map1_container',config);
+            map.centerAndZoom(new T.LngLat(102.061917,38.424982), zoom);
+        var countries = [];
+    var countriesOverlay = new T.D3Overlay(init,redraw);
+    //var countriesOverlay1 = new T.D3Overlay(init1,redraw1);
+
+    d3.json("https://geo.datav.aliyun.com/areas_v3/bound/440100_full.json", function (data) {
+        countries = data.features;
+        map.addOverLay(countriesOverlay)
+        countriesOverlay.bringToFront();
+		//bringToFront()
+       // map.addOverLay(countriesOverlay1)
+       // countriesOverlay.bringToBack();
+    });
+
+    function init(sel, transform) {
+	console.log(countries)
+        var upd = sel.selectAll('path.geojson').data(countries);
+
+
+        upd.enter()
+                .append('path')
+                .attr("class", "geojson")
+                .attr('stroke', 'white')
+                .attr('fill','red')
+
+                .attr('fill-opacity', '0.4')
+		const equalBy = obj => obj.properties.name;
+		for(var i= 1;i<12;i++){
+			let arr1 = [];
+            arr1.push( countries[i-1])
+			const circle = sel.selectAll("path.geojson").data(arr1, equalBy) // UPDATE
+			.attr('fill-opacity', '0.'+i)
+			.attr('title',arr1[0].properties.name).
+			attr("class", "geojson tdt-interactive")
+			.on("click", data=> { console.log('clicked'); });
+
+		}
+    }
+function ccccc() { console.log('clicked'); }
+    function redraw(sel, transform) {
+        sel.selectAll('path.geojson').each(
+                function (d, i) {
+                    d3.select(this).attr('d', transform.pathFromGeojson)
+                }
+        )
+
+    }
+        }
+
+
+
+  /*  function init1(sel, transform) {
+		debugger;
+        var upd = sel.selectAll('path.geojson1').data(countries);
+        upd.enter()
+            .append('path')
+            .attr("class", "geojson1")
+            .attr('stroke', 'black')
+            .attr('fill', function (d, i) {
+                return d3.hsl(Math.random() * 360, 0.9, 0.5)
+            })
+            .attr('fill-opacity', '0.5')
+    }
+
+    function redraw1(sel, transform) {
+        sel.selectAll('path.geojson1').each(
+            function (d, i) {
+                d3.select(this).attr('d', transform.pathFromGeojson)
+            }
+        )
+
+    }*/
+    </script>
 </head>
-
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="/">geographically-weighted-regression </a></h1>
-                <nav><ul>
-                    <li class="active"><a href="/category/gwr.html">GWR</a></li>
-                </ul></nav>
-        </header><!-- /#banner -->
-<section id="content" class="body">
-  <article>
-    <header>
-      <h1 class="entry-title">
-        <a href="/gwr4-downloads.html" rel="bookmark"
-           title="Permalink to GWR4 Downloads">GWR4 Downloads</a></h1>
-    </header>
-
-    <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2016-07-13T14:40:00-05:00">
-                Published: Wed 13 July 2016
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="/author/taylor-oshan.html">Taylor Oshan</a>
-        </address>
-<p>In <a href="/category/gwr.html">GWR</a>.</p>
-
-</footer><!-- /.post-info -->      <p>This website is the temporary home of the GWR4 materials. Stay tuned for a new
-permanent home that is currently being built at Arizona State University. For
-any questions please feel free to email <a class="reference external" href="mailto:gwrtools&#64;gmail.com">gwrtools&#64;gmail.com</a>.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-<div class="line"><br /></div>
-</div>
-<p><strong>Software</strong></p>
-<p><a class="reference external" href="https://raw.githubusercontent.com/gwrtools/gwr4/master/GWR408_setup_win32.exe">32bit Windows GWR4 Download</a></p>
-<p><a class="reference external" href="https://raw.githubusercontent.com/gwrtools/gwr4/master/GWR408_setup_win64.exe">64bit Windows GWR4 Download</a></p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p><strong>Manual</strong></p>
-<p><a class="reference external" href="https://raw.githubusercontent.com/gwrtools/gwr4/master/GWR4manual_409.pdf">Manual for GWR4 Software</a></p>
-<div class="line-block">
-<div class="line"><br /></div>
-<div class="line"><br /></div>
-</div>
-<p><strong>Sample Data</strong></p>
-<p><a class="reference external" href="https://raw.githubusercontent.com/gwrtools/gwr4/master/tokyo.zip">Tokyo Dataset</a></p>
-<p><a class="reference external" href="https://raw.githubusercontent.com/gwrtools/gwr4/master/georgia.zip">Georgia Dataset</a></p>
-<p><a class="reference external" href="https://raw.githubusercontent.com/gwrtools/gwr4/master/clearwater.zip">Clearwater Dataset</a></p>
-
-    </div><!-- /.entry-content -->
-
-  </article>
-</section>
-        <section id="extras" class="body">
-                <div class="blogroll">
-                        <h2>blogroll</h2>
-                        <ul>
-                            <li><a href="http://getpelican.com/">Pelican</a></li>
-                            <li><a href="http://python.org/">Python.org</a></li>
-                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
-                            <li><a href="#">You can modify those links in your config file</a></li>
-                        </ul>
-                </div><!-- /.blogroll -->
-                <div class="social">
-                        <h2>social</h2>
-                        <ul>
-
-                            <li><a href="#">You can add links in your config file</a></li>
-                            <li><a href="#">Another social link</a></li>
-                        </ul>
-                </div><!-- /.social -->
-        </section><!-- /#extras -->
-
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
-                </address><!-- /#about -->
-
-                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
-        </footer><!-- /#contentinfo -->
-
+<body onLoad="onLoad()">
+<div id="map1_container"></div>
 </body>
 </html>
