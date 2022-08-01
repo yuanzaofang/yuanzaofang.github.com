@@ -10,98 +10,171 @@
     </style>
     <script type="text/javascript" src="http://api.tianditu.gov.cn/api?v=4.0&tk=a164f953f301c4b2833250d64104a77a"></script>
     <script src="http://cdn.bootcss.com/d3/3.5.17/d3.js " charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src=" https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
     <script src="http://lbs.tianditu.gov.cn/api/js4.0/opensource/openlibrary/D3SvgOverlay.js"></script>
+
+
     <script>
-		//注：同一页面创建多个地图时必须为同一投影
-        var map,map2;
-        var zoom = 12;
-        function onLoad() {
-           var imgURL1 ="http://t0.tianditu.gov.cn/img_w/wmts?" +     "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" +
-            "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}" +
-            "&tk=a164f953f301c4b2833250d64104a77a";//影像底图
-        	//创建自定义图层对象
-          var imgURL2 ="http://t0.tianditu.gov.cn/cia_w/wmts?" +     "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cia&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" +
-            "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}" +
-            "&tk=a164f953f301c4b2833250d64104a77a";//矢量注记
-        	//创建自定义图层对象
-            var lay1 = new T.TileLayer(imgURL1, { minZoom: 6, maxZoom: 18 });
-            var lay2 = new T.TileLayer(imgURL2, { minZoom: 6, maxZoom: 18 });
+     function onLoad() {
+         initMap();
+         // 初始化区边界
+         initPolygon("https://geo.datav.aliyun.com/areas_v3/bound/440100_full.json",
+             {});
 
-            var config = { layers: [lay1,lay2] };
-            map = new T.Map('map1_container',config);
-            map.centerAndZoom(new T.LngLat(102.061917,38.424982), zoom);
-        var countries = [];
-    var countriesOverlay = new T.D3Overlay(init,redraw);
-    //var countriesOverlay1 = new T.D3Overlay(init1,redraw1);
+         // 初始化地图
+         function initMap() {
+             var zoom = 12;
+             var imageURL = "http://t0.tianditu.gov.cn/img_w/wmts?" + "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" + "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=a164f953f301c4b2833250d64104a77a";
+             this.map = new T.Map("map1_container", {
+                 layers: [createBaseLayer(imageURL)],
+                 minZoom: 5, maxZoom: 18
+             });
 
-    d3.json("https://geo.datav.aliyun.com/areas_v3/bound/440100_full.json", function (data) {
-        countries = data.features;
-        map.addOverLay(countriesOverlay)
-        countriesOverlay.bringToFront();
-		//bringToFront()
-       // map.addOverLay(countriesOverlay1)
-       // countriesOverlay.bringToBack();
-    });
+             window.map = this.map;
+             this.map.centerAndZoom(new T.LngLat(116.40969, 39.94940), zoom);
+             this.map.enableScrollWheelZoom();
+         }
+         //创建弹出窗口
+         function tanchu(){
 
-    function init(sel, transform) {
-	console.log(countries)
-        var upd = sel.selectAll('path.geojson').data(countries);
+         }
 
+         // 创建底图
+         function createBaseLayer(url) {
+             let layer = new T.TileLayer(url, {minZoom: 1, maxZoom: 18});
+             return layer
+         }
 
-        upd.enter()
-                .append('path')
-                .attr("class", "geojson")
-                .attr('stroke', 'white')
-                .attr('fill','red')
+         // 异步加载Geojson数据
+         async function initPolygon(geojsonUrl, styleOption) {
+             let res = await axios.get(geojsonUrl);
+             let featureCollection = res.data;
+             let lines = getLinesFromGeojson(featureCollection)
+             /*    lines.forEach((coors) => {
+                 let polygon = createPolygon(coors, styleOption);
+                 map.addOverLay(polygon);
+                 //polygon.bringToFront();
+                   });*/
 
-                .attr('fill-opacity', '0.4')
-		const equalBy = obj => obj.properties.name;
-		for(var i= 1;i<12;i++){
-			let arr1 = [];
-            arr1.push( countries[i-1])
-			const circle = sel.selectAll("path.geojson").data(arr1, equalBy) // UPDATE
-			.attr('fill-opacity', '0.'+i)
-			.attr('title',arr1[0].properties.name).
-			attr("class", "geojson tdt-interactive")
-			.on("click", data=> { console.log('clicked'); });
-
-		}
-    }
-function ccccc() { console.log('clicked'); }
-    function redraw(sel, transform) {
-        sel.selectAll('path.geojson').each(
-                function (d, i) {
-                    d3.select(this).attr('d', transform.pathFromGeojson)
-                }
-        )
-
-    }
-        }
-
-
-
-  /*  function init1(sel, transform) {
-		debugger;
-        var upd = sel.selectAll('path.geojson1').data(countries);
-        upd.enter()
-            .append('path')
-            .attr("class", "geojson1")
-            .attr('stroke', 'black')
-            .attr('fill', function (d, i) {
-                return d3.hsl(Math.random() * 360, 0.9, 0.5)
-            })
-            .attr('fill-opacity', '0.5')
-    }
-
-    function redraw1(sel, transform) {
-        sel.selectAll('path.geojson1').each(
-            function (d, i) {
-                d3.select(this).attr('d', transform.pathFromGeojson)
+             for (let i = 0; i < lines.length; i++) {
+                 var lines1 = [];
+                 aa = lines[i][0];
+                 for (let j = 0; j < aa.length; j++) {
+                     bb = aa[j]
+                     lines1.push(new T.LngLat(bb[0], bb[1]))
+                 }
+                 var sContent =
+                "<div style='margin:0px;'>" +
+                "<div style='margin:10px 10px; '>" +
+                "<img style='float:left;margin:0px 10px' src='http://lbs.tianditu.gov.cn/images/logo.png' width='101' height='49' title='天安门'/>" +
+                "<div style='margin:10px 0px 10px 120px;'>电话 : (010)88187700 <br>地址：北京市顺义区机场东路国门商务区地理信息产业园2号楼天地图大厦" +
+                "</div>" +
+                "<input  id='keyWord' value='机场' type='text' style='border: 1px solid #cccccc;width: 180px;height: 20px;line-height: 20px;padding-left: 10px;display: block;float: left;'>" +
+                "<input style='margin-left:195px;  width: 80px;height: 24px; text-align: center; background: #5596de;color: #FFF;border: none;display: block;cursor: pointer;' type='button' value='周边搜索'  onClick=\"localsearch.searchNearby(document.getElementById('keyWord').value,center,radius)\">" +
+                "</div>" +
+                "</div>";
+                 var polygon = new T.Polygon(lines1,{
+                     color: "blue", weight: 10, opacity: 0.5, fillColor: "#ffffff", fillOpacity: 0.5
+                 });
+                 map.addOverLay(polygon);
+                 addClickHandler(sContent,polygon);
+                 function addClickHandler(content,polygon){
+                polygon.addEventListener("click",function(e){
+                    openInfo(content,e)}
+                );
             }
-        )
+            function openInfo(content,e){
+                var point = e.lnglat;
+                polygon = new T.Polygon(point);// 创建标注
+                var markerInfoWin = new T.InfoWindow(content,{offset:new T.Point(0,-30)}); // 创建信息窗口对象
+                map.openInfoWindow(markerInfoWin,point); //开启信息窗口
+            }
 
-    }*/
-    </script>
+                /* var infoWin1 = new T.InfoWindow();
+
+            infoWin1.setContent(sContent);
+            polygon.addEventListener("click", function () {
+                polygon.openInfoWindow(infoWin1);
+            });// 将标注添加到地图中*/
+             }
+         }
+
+         // 初始化偏移矢量多边形
+         async function initOffsetPolygon(geojsonUrl, styleOption) {
+             let res = await axios.get(geojsonUrl);
+             let featureCollection = res.data;
+             let lines = tdtUtil.getLinesFromGeojson(featureCollection)
+             /*   forEach((coors) => {
+                 let polygon = tdtUtil.createOffsetPolygon(coors, styleOption);
+             }); */
+             var lines1 = [];
+             lines1.push(new T.LngLat(116.41136, 39.97569));
+             lines1.push(new T.LngLat(116.411794, 39.9068));
+             lines1.push(new T.LngLat(116.32969, 39.92940));
+             lines1.push(new T.LngLat(116.385438, 39.90610));
+             //创建面对象
+             var polygon = new T.Polygon(lines1, {
+                 color: "blue", weight: 3, opacity: 0.5, fillColor: "#FFFFFF", fillOpacity: 0.5
+             });
+             map.addOverLay(polygon);
+         }
+
+
+         /**
+          * 从featureCollection获取所有linestring
+          * @param {*} featureCollection
+          * @returns  返回线段数组
+          */
+         function getLinesFromGeojson(featureCollection) {
+             let lines = [];
+             let geometries = featureCollection.features
+             for (let i = 0; i < geometries.length; i++) {
+                 let geometry = geometries[i]
+                 let line = geometry.geometry.coordinates
+                 lines = lines.concat(line)
+             }
+             return lines
+         }
+
+         /**
+          * 创建polygon
+          * @param {*} points 多边形坐标 二维数组
+          * @param {*} option
+          * @returns  返回polygon
+          */
+         function createPolygon(coors, option) {
+             let points = [];
+             coors.forEach((lonlat) => {
+                 points.push(new T.LngLat(lonlat[0], lonlat[1]));
+             })
+             return new T.Polygon(points, {
+                 color: option.lineColor || "#47D4DE",
+                 weight: option.lineWidth || 1,
+                 opacity: option.lineOpacity || 1,
+                 fillColor: option.fillColor || "black",
+                 fillOpacity: option.fillOpacity || 1
+             });
+
+         }
+     }
+
+        /*function onLoad() {
+            var imgURL1 = "http://t0.tianditu.gov.cn/img_w/wmts?" + "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" +
+                "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}" +
+                "&tk=a164f953f301c4b2833250d64104a77a";//影像底图
+            //创建自定义图层对象
+            var imgURL2 = "http://t0.tianditu.gov.cn/cia_w/wmts?" + "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cia&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" +
+                "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}" +
+                "&tk=a164f953f301c4b2833250d64104a77a";//矢量注记
+            //创建自定义图层对象
+            var lay1 = new T.TileLayer(imgURL1, {minZoom: 6, maxZoom: 18});
+            var lay2 = new T.TileLayer(imgURL2, {minZoom: 6, maxZoom: 18});
+            var config = {layers: [lay1, lay2]};
+            map = new T.Map('map1_container', config);
+            map.centerAndZoom(new T.LngLat(114.061917, 23.424982), zoom);   */
+             </script>
 </head>
 <body onLoad="onLoad()">
 <div id="map1_container"></div>
