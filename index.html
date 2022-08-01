@@ -26,7 +26,7 @@
          // 初始化地图
          function initMap() {
              var zoom = 12;
-             var imageURL = "http://t0.tianditu.gov.cn/img_w/wmts?" + "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" + "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=a164f953f301c4b2833250d64104a77a";
+             var imageURL = "https://t0.tianditu.gov.cn/img_w/wmts?" + "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles" + "&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=a164f953f301c4b2833250d64104a77a";
              this.map = new T.Map("map1_container", {
                  layers: [createBaseLayer(imageURL)],
                  minZoom: 5, maxZoom: 18
