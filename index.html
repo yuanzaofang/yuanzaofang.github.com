@@ -68,7 +68,7 @@
   )
     .then(res => res.json())
     .then(data => {
-      const chinaPolygonLayer = new PolygonLayer({
+      const chinaPolygonLayer = new  L7.PolygonLayer({
         autoFit: true
       }).source(data);
 
@@ -85,7 +85,7 @@
           opacity: 1
         });
       //  图层边界
-      const layer2 = new LineLayer({
+      const layer2 = new  L7.LineLayer({
         zIndex: 2
       })
         .source(data)
@@ -112,7 +112,7 @@
   )
     .then(res => res.json())
     .then(data => {
-      const labelLayer = new PointLayer({
+      const labelLayer = new  L7.PointLayer({
         zIndex: 5
       })
         .source(data, {
