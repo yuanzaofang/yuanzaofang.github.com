@@ -68,11 +68,11 @@
      scene.on("loaded", () => {
   fetch(
     // 'https://gw.alipayobjects.com/os/bmw-prod/1981b358-28d8-4a2f-9c74-a857d5925ef1.json' //  获取行政区划P噢利用
-    "https://gw.alipayobjects.com/os/bmw-prod/d6da7ac1-8b4f-4a55-93ea-e81aa08f0cf3.json"
+    "https://gw.alipayobjects.com/os/bmw-prod/ab42a860-f874-4452-a8b6-4168a36c1f2c.json"
   )
     .then(res => res.json())
     .then(data => {
-      const chinaPolygonLayer = new PolygonLayer({
+      const chinaPolygonLayer = new  L7.PolygonLayer({
         autoFit: true
       }).source(data);
 
@@ -89,7 +89,7 @@
           opacity: 1
         });
       //  图层边界
-      const layer2 = new LineLayer({
+      const layer2 = new  L7.LineLayer({
         zIndex: 2
       })
         .source(data)
