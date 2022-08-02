@@ -72,11 +72,11 @@
   )
     .then(res => res.json())
     .then(data => {
-        const chinaPolygonLayer = new L7.PolygonLayer({
+        const ly1 = new L7.PolygonLayer({
             autoFit: true
         }).source(data);
 
-        chinaPolygonLayer
+        ly1
             .color("name", [
                 "rgb(239,243,255)",
                 "rgb(189,215,231)",
@@ -89,7 +89,7 @@
                 opacity: 1
             });
         //  图层边界
-        const layer2 = new L7.LineLayer({
+        const ly2 = new L7.LineLayer({
             zIndex: 2
         })
             .source(data)
@@ -98,9 +98,10 @@
             .style({
                 opacity: 1
             });
-    });
-      scene.addLayer(chinaPolygonLayer);
-      scene.addLayer(layer2);
+   
+      scene.addLayer(ly1);
+      scene.addLayer(ly2);
+       });
       });
 </script>
 </body>
