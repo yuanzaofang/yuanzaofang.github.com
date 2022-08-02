@@ -17,7 +17,7 @@
 <body>
 <div id="map1_container"></div>
 <script src = 'https://unpkg.com/@antv/l7'></script>
-  <script>
+<script>
         const scene = new L7.Scene({
             id: 'map1_container',
             map: new L7.GaodeMap({
@@ -61,6 +61,10 @@
                         zoomOffset: 0
                     }
                 });
+ scene.addLayer(baseLayer);
+            scene.addLayer(annotionLayer);
+        });            
+            
             scene.on("loaded", () => {
   fetch(
     // 'https://gw.alipayobjects.com/os/bmw-prod/1981b358-28d8-4a2f-9c74-a857d5925ef1.json' //  获取行政区划P噢利用
@@ -97,6 +101,7 @@
 
       scene.addLayer(chinaPolygonLayer);
       scene.addLayer(layer2);
+       });
 
       // 加了这一段
       document.addEventListener(
@@ -133,8 +138,7 @@
         });
 
       scene.addLayer(labelLayer);
-    });
-           
+    });         
         });
     </script>
 </body>
