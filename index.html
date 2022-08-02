@@ -22,7 +22,7 @@
             id: 'map1_container',
             map: new L7.GaodeMap({
                 center: [90.268, 40.3628],
-                zoom: 3
+                zoom: 10
             })
         });
         scene.on('loaded', () => {
@@ -63,7 +63,45 @@
                 });
             scene.addLayer(baseLayer);
             scene.addLayer(annotionLayer);
-        });      
+        });    
+    //加载矢量
+     scene.on("loaded", () => {
+  fetch(
+    // 'https://gw.alipayobjects.com/os/bmw-prod/1981b358-28d8-4a2f-9c74-a857d5925ef1.json' //  获取行政区划P噢利用
+    "https://gw.alipayobjects.com/os/bmw-prod/d6da7ac1-8b4f-4a55-93ea-e81aa08f0cf3.json"
+  )
+    .then(res => res.json())
+    .then(data => {
+      const chinaPolygonLayer = new PolygonLayer({
+        autoFit: true
+      }).source(data);
+
+      chinaPolygonLayer
+        .color("name", [
+          "rgb(239,243,255)",
+          "rgb(189,215,231)",
+          "rgb(107,174,214)",
+          "rgb(49,130,189)",
+          "rgb(8,81,156)"
+        ])
+        .shape("fill")
+        .style({
+          opacity: 1
+        });
+      //  图层边界
+      const layer2 = new LineLayer({
+        zIndex: 2
+      })
+        .source(data)
+        .color("rgb(93,112,146)")
+        .size(0.6)
+        .style({
+          opacity: 1
+        });
+
+      scene.addLayer(chinaPolygonLayer);
+      scene.addLayer(layer2);
+      })
 </script>
 </body>
 </html>
