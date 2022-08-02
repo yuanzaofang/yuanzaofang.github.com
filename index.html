@@ -64,7 +64,7 @@
             scene.addLayer(baseLayer);
             scene.addLayer(annotionLayer);
         });    
-    //加载矢量
+   //加载矢量
      scene.on("loaded", () => {
   fetch(
     // 'https://gw.alipayobjects.com/os/bmw-prod/1981b358-28d8-4a2f-9c74-a857d5925ef1.json' //  获取行政区划P噢利用
@@ -72,33 +72,33 @@
   )
     .then(res => res.json())
     .then(data => {
-      const chinaPolygonLayer = new  L7.PolygonLayer({
-        autoFit: true
-      }).source(data);
+        const chinaPolygonLayer = new L7.PolygonLayer({
+            autoFit: true
+        }).source(data);
 
-      chinaPolygonLayer
-        .color("name", [
-          "rgb(239,243,255)",
-          "rgb(189,215,231)",
-          "rgb(107,174,214)",
-          "rgb(49,130,189)",
-          "rgb(8,81,156)"
-        ])
-        .shape("fill")
-        .style({
-          opacity: 1
-        });
-      //  图层边界
-      const layer2 = new  L7.LineLayer({
-        zIndex: 2
-      })
-        .source(data)
-        .color("rgb(93,112,146)")
-        .size(0.6)
-        .style({
-          opacity: 1
-        });
-
+        chinaPolygonLayer
+            .color("name", [
+                "rgb(239,243,255)",
+                "rgb(189,215,231)",
+                "rgb(107,174,214)",
+                "rgb(49,130,189)",
+                "rgb(8,81,156)"
+            ])
+            .shape("fill")
+            .style({
+                opacity: 1
+            });
+        //  图层边界
+        const layer2 = new L7.LineLayer({
+            zIndex: 2
+        })
+            .source(data)
+            .color("rgb(93,112,146)")
+            .size(0.6)
+            .style({
+                opacity: 1
+            });
+    });
       scene.addLayer(chinaPolygonLayer);
       scene.addLayer(layer2);
       });
