@@ -99,7 +99,21 @@
             .style({
                 opacity: 1
             });
-   
+      const hightLayer = new LineLayer({
+        zIndex: 4, // 设置显示层级
+        name: 'hightlight'
+      })
+        .source({
+          type: 'FeatureCollection',
+          features: [ ]
+        })
+        .shape('line')
+        .size(2)
+        .color('red')
+        .style({
+          opacity: 1
+        });
+      scene.addLayer(hightLayer);
       scene.addLayer(ly1);
       scene.addLayer(ly2);
       ly1.on('click', feature => {
