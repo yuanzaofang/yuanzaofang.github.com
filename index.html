@@ -116,11 +116,14 @@
       scene.addLayer(hightLayer);
       scene.addLayer(ly1);
       scene.addLayer(ly2);
-      ly1.on('click', feature => {
-        console.log(feature);
-        ly2.setData({
-          type: 'FeatureCollection',
-          features: [ feature.feature ]
+      ly1.on('click', e => {
+        const{lng,lat}=e.lnglat;
+        ly2.innerHTML = `
+          <p>click info</>
+          <p>featureId: ${e.featureId}</p>
+          <p>lng: ${lng}</p>
+          <p>lat: ${lat}</p>
+        `;
         });
       });
        });
