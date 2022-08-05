@@ -125,6 +125,20 @@
         });
       });
       });
+         //mask layer
+         scene.on('loaded', () => {
+  fetch(
+    './fanwei.json'
+  )
+    .then(res => res.json())
+    .then(data => {
+      const layer = new MaskLayer({})
+        .source(data);
+
+      scene.addLayer(layer);
+    });
+  addLayer();
+});
          });
 </script>
 </body>
