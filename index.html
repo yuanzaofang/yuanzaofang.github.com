@@ -132,12 +132,17 @@
   )
     .then(res => res.json())
     .then(data => {
-      const layer = new MaskLayer({})
-        .source(data);
-
+     const layer = new L7.LineLayer({
+            zIndex: 4
+        })
+            .source(data)
+            .color("rgb(0,0,0)")
+            .size(2)
+            .style({
+                opacity: 1
+            });
       scene.addLayer(layer);
     });
-  addLayer();
 });
          });
 </script>
