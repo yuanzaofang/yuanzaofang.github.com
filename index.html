@@ -94,8 +94,8 @@
             zIndex: 2
         })
             .source(data)
-            .color("rgb(93,112,146)")
-            .size(0.6)
+            .color("rgb(0,0,0)")
+            .size(2)
             .style({
                 opacity: 1
             });
@@ -126,7 +126,7 @@
       });
       });
          //mask layer
-         scene.on('loaded', () => {
+  scene.on('loaded', () => {
   fetch(
     './fanwei.json'
   )
