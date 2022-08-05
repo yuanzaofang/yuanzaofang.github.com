@@ -42,6 +42,8 @@
                     parser: {
                         type: 'rasterTile',
                         tileSize: 256,
+                        minZoom: 6,
+                        maxZoom: 25,
                         zoomOffset: 0
                     }
                 }
@@ -136,7 +138,7 @@
             autoFit: true
         }).source(data);
        layer
-            .color("rgb(0,0,0)")
+            .color("rgb(255,255,255)")
             .size(2)
             .style({
                 opacity: 1
