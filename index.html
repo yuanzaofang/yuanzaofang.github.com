@@ -133,9 +133,9 @@
     .then(res => res.json())
     .then(data => {
      const layer = new L7.LineLayer({
-            zIndex: 4
-        })
-            .source(data)
+            autoFit: true
+        }).source(data);
+       layer
             .color("rgb(0,0,0)")
             .size(2)
             .style({
